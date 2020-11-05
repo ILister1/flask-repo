@@ -1,6 +1,6 @@
 from application import app, db
 from application.models import Todos
-from flask import render_template, redirect, url_for
+from flask import render_template, redirect, url_for, request
 from application.forms import TodoForm
 
 
@@ -13,15 +13,15 @@ def index():
     all_todos = Todos.query.all()
     return render_template('index.html', all_todos=all_todos)
 
-@app.route('/add')
+@app.route('/add', methods=['GET', 'POST'])
 def add():
     form = TodoForm()
-if form.validate_on_submit():
-   new_todo = Todos(task=form.task.data))
-         db.session.add(new_todo)
-         db.session.commit()
-    return redirect(url_for('index'))
- return render_template('add.html')
+    if form.validate_on_submit():
+        new_todo = Todos(task=request.form.get("name"))
+        db.session.add(new_todo)
+        db.session.commit()
+        return redirect(url_for('index'))
+    return render_template('add.html', form=form)
 
 @app.route('/complete/<int:todo_id>')
 def complete(todo_id):
@@ -37,12 +37,22 @@ def incomplete(todo_id):
     db.session.commit()
     return redirect(url_for('index'))
 
-@app.route('/update/<task>')
-def update(task):
-    todo_to_update = Todos.query.first()
-    todo_to_update.task = task
-    db.session.commit()
-    return redirect(url_for('index'))
+@app.route('/update/<int:todo_id>', methods=['GET', 'POST'])
+def update(todo_id):
+    form = TodoForm()
+    todo_to_update = Todos.query.get(todo_id)
+    if form.validate_on_submit():
+        todo_to_update.task = form.task.data
+        db.session.commit()
+        return redirect(url_for('index'))
+    elif request.method == "GET":
+        form.task.data = todo_to_update.task
+    return render_template('update.html', form=form)
+#def update(task):
+ #   todo_to_update = Todos.query.first()
+  #  todo_to_update.task = task
+   # db.session.commit()
+   # return redirect(url_for('index'))
 
 @app.route('/delete')
 def delete():
