@@ -13,11 +13,11 @@ def index():
     all_todos = Todos.query.all()
     return render_template('index.html', all_todos=all_todos)
 
-@app.route('/add', methods=['GET', 'POST'])
+@app.route('/add', methods=['POST'])
 def add():
     form = TodoForm()
     if form.validate_on_submit():
-        new_todo = Todos(task=request.form.get("name"))
+        new_todo = Todos(task=form.task.data)
         db.session.add(new_todo)
         db.session.commit()
         return redirect(url_for('index'))
@@ -54,9 +54,9 @@ def update(todo_id):
    # db.session.commit()
    # return redirect(url_for('index'))
 
-@app.route('/delete')
-def delete():
-    todo_to_delete = Todos.query.first()
+@app.route('/delete/<int:todo_id>')
+def delete(todo_id):
+    todo_to_delete = Todos.query.get(todo_id)
     db.session.delete(todo_to_delete)
     db.session.commit()
     return redirect(url_for('index'))

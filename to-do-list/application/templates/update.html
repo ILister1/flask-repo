@@ -1,4 +1,4 @@
-{% extends layout.html %}
+{% extends 'layout.html' %}
 {% block body_content %}
 
 <form method='POST' action=''>
@@ -7,10 +7,11 @@
        <br>
        {% if form.task.errors %}
        {% for error in form.task.errors %}
+       {{ error }}
        {% endfor %}
        {% endif %}
        <br>
        {{ form.submit }}
 </form>
 
-{% endblock body_content %)
+{% endblock body_content %}

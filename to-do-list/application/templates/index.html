@@ -1,17 +1,31 @@
 {% extends 'layout.html' %}
 {% block body_content %}
+
 {% for todo in all_todos %}
+
 {{ todo.task }}
-<form action='{{ url_for('update', 'todo_id=todo.id' }}'>
-	<button>Update</button>
-</form>
-<br>
 {% if todo.complete %} <br> <br>
 &#9989
-{% endif %} <br> <br>
-{ if todo.complete %}
-<form action='{{ url_for('complete', todo_id=todo.id }}'>
+{% endif %}
+<br>
+{% if todo.complete %}
+<form action='{{ url_for('incomplete', todo_id=todo.id) }}'>
+        <button>Incomplete</button>
+</form>
+{% else %}
+<form action='{{ url_for('complete', 'todo_id=todo.id') }}'>
 	<button>Complete</button>
+</form>
+{% endif %}
+<form action='{{ url_for('update', 'todo_id=todo.id') }}'>
+	<button>Update</button>
+</form>
+<form action='{{ url_for('delete', 'todo_id=todo.id') }}'>
+	<button>Delete</button>
+</form>
+<br><br>
+
 {% endfor %}
+
 {% endblock body_content %}
 
